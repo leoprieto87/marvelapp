@@ -1,5 +1,7 @@
 import md5 from "md5";
 import { useCallback, useEffect, useState } from "react";
+import { Personagem, Title } from "./style";
+
 
 export function Characters() {
 
@@ -31,11 +33,11 @@ export function Characters() {
     useEffect(() => {
         fetchData()
     }, [])
-
+    console.log(characters)
     const handleMore = useCallback(() => {
         try {
-
             const offset = characters.length
+            console.log(offset)
             fetch(URL_TO_FETCH + '&offset=' + offset, {
                 method: 'get'
             })
@@ -54,16 +56,15 @@ export function Characters() {
 
     return (
         <>
-            <h2>##PERSONAGENS</h2>
+            <Title>Personagens</Title>
             <div>
-
                 <ul>
                     {characters.map((character) =>
-                        <li key={character.id}>
+                        <Personagem key={character.id}>
                             {character.name}
                             <br />
-                            <img width={50} height={50} src={character.thumbnail.path + '.' + character.thumbnail.extension} alt="" />
-                        </li>
+                            <img width={200} height={200} src={character.thumbnail.path + '.' + character.thumbnail.extension} alt="" />
+                        </Personagem>
                     )}
                 </ul>
 
