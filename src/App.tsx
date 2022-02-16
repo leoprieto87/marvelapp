@@ -18,6 +18,7 @@ function App() {
             <li>Eventos</li>
             <li>Séries</li>
             <li>Histórias</li>
+            <li>ZUQUETO</li>
           </ul>
         </nav>
 
