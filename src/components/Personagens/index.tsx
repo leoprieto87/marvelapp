@@ -1,11 +1,12 @@
 import md5 from "md5";
-import { useCallback, useEffect, useState } from "react";
-import { Personagem, Title } from "./style";
+import { SetStateAction, useCallback, useEffect, useState } from "react";
+import { DescPersonagem, CardPersonagem, Title, ContentResult } from "./style";
 
 
 export function Characters() {
 
     const [characters, setCharacters] = useState([])
+    const [isHover, setIsHover] = useState(null)
 
     const publicKey = '61356e78b8ce1037e2acf521205aa013'
     const privateKey = '04eebbc1094eac67831b65a7536632f75139abb1'
@@ -15,29 +16,10 @@ export function Characters() {
 
     const URL_TO_FETCH = 'http://gateway.marvel.com/v1/public/characters?ts=' + time + '&apikey=' + publicKey + '&hash=' + hash;
 
-    function fetchData() {
-        fetch(URL_TO_FETCH, {
-            method: 'get'
-        })
-            .then(response => response.json())
-            .then(function (response) {
-                setCharacters(response.data.results)
 
-            })
-            .catch(function (err) {
-                console.error(err);
-            });
-    }
-
-
-    useEffect(() => {
-        fetchData()
-    }, [])
-    console.log(characters)
     const handleMore = useCallback(() => {
         try {
             const offset = characters.length
-            console.log(offset)
             fetch(URL_TO_FETCH + '&offset=' + offset, {
                 method: 'get'
             })
@@ -54,19 +36,65 @@ export function Characters() {
         }
     }, [characters])
 
+    function fetchData() {
+        fetch(URL_TO_FETCH, {
+            method: 'get'
+        })
+            .then(response => response.json())
+            .then(function (response) {
+                setCharacters(response.data.results)
+
+            })
+            .catch(function (err) {
+                console.error(err);
+            });
+    }
+
+    function toggleHoverActive(index: number | SetStateAction<null>) {
+        setIsHover(index)
+    }
+
+    function toggleActiveStyle(index: number | null) {
+        if (index === isHover) {
+            return "hoverShow"
+        } else {
+
+        }
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    console.log(characters)
+
     return (
         <>
             <Title>Personagens</Title>
             <div>
-                <ul>
-                    {characters.map((character) =>
-                        <Personagem key={character.id}>
-                            {character.name}
-                            <br />
-                            <img width={200} height={200} src={character.thumbnail.path + '.' + character.thumbnail.extension} alt="" />
-                        </Personagem>
+                <ContentResult>
+                    {characters.map((character, index) =>
+                        <CardPersonagem
+                            key={character.id}
+                            onMouseEnter={() => {
+                                toggleHoverActive(index)
+                            }}
+                            onMouseLeave={() => {
+                                setIsHover(null)
+                            }}
+                            className={toggleActiveStyle(index)}
+                        >
+
+                            <img width={200} height={350} src={character.thumbnail.path + '.' + character.thumbnail.extension} alt="" />
+
+                            <DescPersonagem>
+                                {character.name}
+                                Series: {character.resourceURI}
+                            </DescPersonagem>
+
+                        </CardPersonagem>
                     )}
-                </ul>
+                </ContentResult>
 
                 <button onClick={handleMore}>VER MAIS</button>
             </div>
