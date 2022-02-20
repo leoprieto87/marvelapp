@@ -30,4 +30,5 @@ export const Menu = styled.div`
     justify-content: space-around;
     width: 100%;
     margin-left: 50px;
+    color: #020202;
 `
