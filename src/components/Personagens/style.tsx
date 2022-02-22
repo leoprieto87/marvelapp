@@ -1,9 +1,11 @@
 import styled from "styled-components";
 
 export const Title = styled.h1`
-  font-size: 1.5em;
+  font-size: 1.3em;
   text-align: center;
-  color: palevioletred;
+  letter-spacing: 1px;
+  font-wight: 400;
+  color: #ffffff;
 `;
 
 export const ContentResult = styled.ul`
@@ -28,12 +30,14 @@ export const CardPersonagem = styled.li`
     align-self: center;
     -webkit-transition: width .2s ease, height .2s ease;
     filter: grayscale(100%);
+    opacity: 0.4;
   }
 
   &.hoverShow {
     img {
       height: 200px;
       filter: none;
+      opacity: 1;
     }
 
     div{
@@ -63,11 +67,11 @@ export const ShowMoreButton = styled.button`
   span {
     width: 20%;
     border: 2px solid #ec1d24;
-    padding: 20px;
+    padding: 10px 20px;
     color: #ec1d24;
     border-radius: 7px;
     font-family: 'Roboto';
-    font-size: 24px;
+    font-size: 1.1em;
     font-weight: 700;
     &:hover {
       background: #ec1d24;
@@ -75,4 +79,4 @@ export const ShowMoreButton = styled.button`
     }
   }
 
-  `;
+`;
