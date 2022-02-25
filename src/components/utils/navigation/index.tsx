@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { Header, LogoMarvel, Menu } from "./style"
 
 export function Navigation() {
@@ -9,12 +10,8 @@ export function Navigation() {
                 </LogoMarvel>
 
                 <Menu>
-                    <span>Personagens</span>
-                    <span>Quadrinhos</span>
-                    <span>Criadores</span>
-                    <span>Eventos</span>
-                    <span>Séries</span>
-                    <span>Histórias</span>
+                    <Link to='/personagens'>Personagens</Link>
+                    <Link to='/quadrinhos'>Quadrinhos</Link>
                 </Menu>
             </Header>
 

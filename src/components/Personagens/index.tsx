@@ -1,29 +1,32 @@
-import md5 from "md5";
 import { Key, ReactChild, ReactFragment, ReactPortal, SetStateAction, useCallback, useEffect, useState } from "react";
 import { FilterElement } from "../../styles/global";
-import { InputBusca } from "../busca";
-import { Loading } from "../loading";
-import { DescPersonagem, CardPersonagem, Title, ContentResult, ShowMoreButton, Busca } from "./style";
+import { Loading } from "../utils/loading";
+import {
+    DescPersonagem,
+    CardPersonagem,
+    Title,
+    ContentResult,
+    ShowMoreButton,
+    ModalDetail,
+    ModalDetailContent
+} from "./style";
+
+import { InputBusca } from "../utils/busca";
+import { API, ts } from "../../services/api";
 
 
 export function Characters() {
 
     const [characters, setCharacters] = useState<any>([])
-    const [searchTerm, setSearchTerm] = useState<string>('')
+    const [searchTerm, setSearchTerm] = useState<string | null>('')
 
     const [isHover, setIsHover] = useState(null)
     const [isLoading, setLoading] = useState(false)
 
-    const windosPosition = window.pageYOffset
-
-    const publicKey = '61356e78b8ce1037e2acf521205aa013'
-    const privateKey = '04eebbc1094eac67831b65a7536632f75139abb1'
-
-    const time = Number(new Date())
-    const hash = md5(time + privateKey + publicKey)
-
-    const URL_TO_FETCH = 'http://gateway.marvel.com/v1/public/characters?ts=' + time + '&apikey=' + publicKey + '&hash=' + hash;
+    const showMore = document.getElementsByClassName(ShowMoreButton.styledComponentId)[0]
+    const windowPosition = window.pageYOffset
     interface DataTypes {
+        description: string;
         id: Key | null | undefined;
         thumbnail: {
             path: string;
@@ -33,21 +36,34 @@ export function Characters() {
         resourceURI: boolean | ReactChild | ReactFragment | ReactPortal | null | undefined;
     }
 
-    const handleMore = useCallback(() => {
+    const handleMore = useCallback(async () => {
+
+        setLoading(true)
+
+
+        const offsetResults = characters.length
+
+        if (searchTerm == null) {
+            setSearchTerm(null)
+        }
+
+        const request = await API.get('characters' + ts, {
+            params: {
+                offset: offsetResults,
+                nameStartsWith: searchTerm || null
+            }
+        })
+
         try {
-            setLoading(true)
-            const offset = characters.length
-            fetch(URL_TO_FETCH + '&offset=' + offset, {
-                method: 'get'
-            })
-                .then(response => response.json())
-                .then(function (response) {
-                    setCharacters([...characters, ...response.data.results])
-                    setLoading(false)
-                })
-                .catch(function (err) {
-                    console.error(err);
-                })
+            request
+            setCharacters([...characters, ...request.data.data.results])
+            setLoading(false)
+
+            if (request.data.data.total == offsetResults) {
+                showMore.classList.add("inactive");
+            } else {
+                showMore.classList.remove("inactive");
+            }
 
         } catch (err) {
             console.log(err)
@@ -56,21 +72,55 @@ export function Characters() {
 
     const handleBusca = function (e: { target: { value: any; }; }) {
         setSearchTerm(e.target.value)
+
+        searchAllCharacters()
     }
 
-    function fetchData() {
+    // SETA DETALHES DO MODAL E SE O MODAL SERA ATIVADO
+    const [characterDetail, setCharacterDetail] = useState<any>([])
+    const [isModal, setIsModal] = useState(false)
+
+    const searchAllCharacters = async () => {
         setLoading(true)
-        fetch(URL_TO_FETCH, {
-            method: 'get'
+        // AJUSTAR O PARAMETRO TS
+        const request = await API.get('characters' + ts, {
+            params: {
+                nameStartsWith: searchTerm
+            }
         })
-            .then(response => response.json())
-            .then(function (response) {
-                setCharacters(response.data.results)
-                setLoading(false)
-            })
-            .catch(function (err) {
-                console.error(err);
-            });
+        try {
+            request
+            setCharacters(request.data.data.results)
+            setLoading(false)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const handleModalDetail = (character: DataTypes) => {
+        setLoading(true)
+        setIsModal(true)
+        setCharacterDetail(character)
+        setLoading(false)
+    }
+
+    async function fetchData() {
+        setLoading(true)
+        const offset = characters.length
+
+        // AJUSTAR O PARAMETRO TS
+        const request = await API.get('characters' + ts, {
+            params: {
+                offset: offset
+            }
+        })
+        try {
+            request
+            setCharacters([...characters, ...request.data.data.results])
+            setLoading(false)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     function toggleHoverActive(index: any) {
@@ -87,7 +137,7 @@ export function Characters() {
 
     useEffect(() => {
         fetchData()
-
+        console.log(characters)
     }, [])
 
     useEffect(() => {
@@ -95,36 +145,28 @@ export function Characters() {
     }, [searchTerm])
 
     useEffect(() => {
-        //AJUSTAR A EXECUÇÃO DESTE FLOAT
+        //AJUSTAR A EXECUÇÃO DESTE FLOAT (ESTA MUITO LENTO)
         const filterFloat = document.getElementsByClassName(FilterElement.styledComponentId)[0]
         const filterHeight = filterFloat.offsetTop
-        if (windosPosition > filterHeight) {
+
+        if (windowPosition > filterHeight) {
             filterFloat.classList.add("float");
         } else {
             filterFloat.classList.remove("float");
         }
-    }, [windosPosition])
+    }, [windowPosition])
 
     return (
         <>
             <FilterElement>
                 <Title>Personagens</Title>
-                <InputBusca placeholder={"pesquise algo aqui"} busca={searchTerm} handleBusca={handleBusca} ></InputBusca>
+                <InputBusca placeholder={"busque algum personagem"} busca={searchTerm} handleBusca={handleBusca} ></InputBusca>
             </FilterElement>
 
             <div>
                 <ContentResult>
 
-                    {characters.filter((character: {
-                        name: string;
-                    }) => {
-                        const matchSearch = character.name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
-                        if (searchTerm == '') {
-                            return character
-                        } else if (matchSearch) {
-                            return character
-                        }
-                    }).map((character: DataTypes,
+                    {characters.map((character: DataTypes,
                         index: number) => {
                         return (
                             <CardPersonagem
@@ -132,6 +174,7 @@ export function Characters() {
                                 onMouseEnter={() => { toggleHoverActive(index) }}
                                 onMouseLeave={() => { setIsHover(null) }}
                                 className={toggleActiveStyle(index)}
+                                onClick={() => { handleModalDetail(character) }}
                             >
                                 <img width={200} height={350} src={character.thumbnail.path + '.' + character.thumbnail.extension} alt="" />
                                 <DescPersonagem>
@@ -140,13 +183,23 @@ export function Characters() {
 
                             </CardPersonagem>
                         )
-                    })}
+                    })
+                    }
+
+                    {isModal && (
+                        <ModalDetail>
+                            <ModalDetailContent>
+                                <button onClick={() => setIsModal(false)}>X FECHAR</button>
+                                {characterDetail.name}
+                                <br />
+                                {characterDetail.description}
+                            </ModalDetailContent>
+                        </ModalDetail>
+                    )}
 
                 </ContentResult>
 
-                <ShowMoreButton onClick={handleMore}>
-                    <span>VER MAIS</span>
-                </ShowMoreButton>
+                <ShowMoreButton onClick={handleMore}><span>VER MAIS</span></ShowMoreButton>
 
                 {isLoading && (
                     <Loading />

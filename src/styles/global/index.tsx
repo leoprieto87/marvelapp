@@ -8,6 +8,10 @@ export const GlobalStyle = createGlobalStyle`
     color: #e2e2e2;
     font-family: 'Bebas Neue', cursive;;
   }
+  ul {
+    margin: 0;
+    padding: 0;
+  }
   button {
     border: none;
   }

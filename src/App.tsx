@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Navigation } from './components/navigation'
+import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom'
+import { Navigation } from './components/utils/navigation'
 import { Characters } from './components/Personagens'
 
 function App() {
@@ -7,8 +8,15 @@ function App() {
 
   return (
     <div className="App">
-      <Navigation />
-      <Characters />
+
+      <Router>
+        <Navigation />
+        <Routes>
+          <Route path='/Personagens' element={<Characters />} />
+          {/* <Route path='/Quadrinhos' element={ } /> */}
+        </Routes>
+      </Router>
+
     </div>
   )
 }

@@ -9,12 +9,15 @@ export function InputBusca(props:
     }) {
 
     return (
-        <SearchInput
-            type={'text'}
-            placeholder={props.placeholder}
-            value={props.busca}
-            onChange={props.handleBusca}
-        />
+        <>
+            <SearchInput
+                type={'text'}
+                placeholder={props.placeholder}
+                value={props.busca}
+                onChange={props.handleBusca}
+            />
+
+        </>
     )
 
 }

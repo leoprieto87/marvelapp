@@ -12,6 +12,8 @@ export const ContentResult = styled.ul`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  width: 100%;
+  justify-content: center;
 `;
 
 export const CardPersonagem = styled.li`
@@ -63,7 +65,9 @@ export const ShowMoreButton = styled.button`
   background: transparent;
   cursor: pointer;
   margin: 10px 0;
-
+  &.inactive span {
+    display: none;
+  }
   span {
     width: 20%;
     border: 2px solid #ec1d24;
@@ -79,4 +83,25 @@ export const ShowMoreButton = styled.button`
     }
   }
 
+`;
+
+export const ModalDetail = styled.div`
+  background: #00000082;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+`;
+
+export const ModalDetailContent = styled.div`
+  height: 400px;
+  width: 70%;
+  margin-top: 150px;
+  background: #ffffff;
+  color: black;
+  border-radius: 10px;
 `;
