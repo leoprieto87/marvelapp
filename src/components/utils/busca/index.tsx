@@ -1,12 +1,11 @@
 import { ChangeEventHandler } from "react"
 import { SearchInput } from "./style"
 
-export function InputBusca(props:
-    {
-        placeholder: string | undefined;
-        busca: string | number | readonly string[] | undefined;
-        handleBusca: ChangeEventHandler<HTMLInputElement> | undefined
-    }) {
+export function InputBusca(props: {
+    placeholder: string | undefined;
+    busca: string | number | readonly string[] | undefined;
+    handleBusca: ChangeEventHandler<HTMLInputElement> | undefined
+}) {
 
     return (
         <>

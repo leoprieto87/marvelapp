@@ -1,4 +1,12 @@
-import { Key, ReactChild, ReactFragment, ReactPortal, SetStateAction, useCallback, useEffect, useState } from "react";
+import {
+    Key,
+    ReactChild,
+    ReactFragment,
+    ReactPortal,
+    useCallback,
+    useEffect,
+    useState
+} from "react";
 import { FilterElement } from "../../styles/global";
 import { Loading } from "../utils/loading";
 import {
@@ -39,21 +47,16 @@ export function Characters() {
     const handleMore = useCallback(async () => {
 
         setLoading(true)
-
-
         const offsetResults = characters.length
-
         if (searchTerm == null) {
             setSearchTerm(null)
         }
-
         const request = await API.get('characters' + ts, {
             params: {
                 offset: offsetResults,
                 nameStartsWith: searchTerm || null
             }
         })
-
         try {
             request
             setCharacters([...characters, ...request.data.data.results])
@@ -72,7 +75,6 @@ export function Characters() {
 
     const handleBusca = function (e: { target: { value: any; }; }) {
         setSearchTerm(e.target.value)
-
         searchAllCharacters()
     }
 
@@ -137,7 +139,6 @@ export function Characters() {
 
     useEffect(() => {
         fetchData()
-        console.log(characters)
     }, [])
 
     useEffect(() => {
